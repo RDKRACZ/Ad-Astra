@@ -1,9 +1,9 @@
 package earth.terrarium.ad_astra.mixin.oxygen;
 
-import earth.terrarium.ad_astra.AdAstra;
-import earth.terrarium.ad_astra.registry.ModFluids;
-import earth.terrarium.ad_astra.util.ModUtils;
-import earth.terrarium.ad_astra.util.OxygenUtils;
+import earth.terrarium.ad_astra.common.config.AdAstraConfig;
+import earth.terrarium.ad_astra.common.registry.ModFluids;
+import earth.terrarium.ad_astra.common.util.ModUtils;
+import earth.terrarium.ad_astra.common.util.OxygenUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvent;
@@ -43,7 +43,7 @@ public abstract class BucketItemMixin {
     // Evaporate water in a no-oxygen environment. Water is not evaporated in a oxygen distributor.
     @Inject(method = "emptyContents", at = @At(value = "HEAD"), cancellable = true)
     public void adastra_emptyContents(Player player, Level level, BlockPos pos, BlockHitResult hitResult, CallbackInfoReturnable<Boolean> cir) {
-        if (!AdAstra.CONFIG.general.doOxygen) {
+        if (!AdAstraConfig.doOxygen) {
             return;
         }
 
@@ -53,7 +53,7 @@ public abstract class BucketItemMixin {
 
         BucketItem bucketItem = (BucketItem) (Object) this;
 
-        if (!OxygenUtils.posHasOxygen(level, pos) && !this.content.equals(ModFluids.CRYO_FUEL.get())) {
+        if (!OxygenUtils.posHasOxygen(level, pos) && !ModFluids.CRYO_FUEL.get().equals(this.content)) {
             int i = pos.getX();
             int j = pos.getY();
             int k = pos.getZ();
@@ -84,7 +84,7 @@ public abstract class BucketItemMixin {
             if (!bl2) {
                 cir.setReturnValue(hitResult != null && bucketItem.emptyContents(player, level, hitResult.getBlockPos().relative(hitResult.getDirection()), null));
             }
-            if (block instanceof LiquidBlockContainer && this.content.equals(Fluids.WATER)) {
+            if (block instanceof LiquidBlockContainer && Fluids.WATER.equals(this.content)) {
                 ((LiquidBlockContainer) block).placeLiquid(level, pos, blockState, ((FlowingFluid) this.content).getSource(false));
                 SoundEvent soundEvent = this.content.is(FluidTags.LAVA) ? SoundEvents.BUCKET_EMPTY_LAVA : SoundEvents.BUCKET_EMPTY;
                 level.playSound(player, pos, soundEvent, SoundSource.BLOCKS, 1.0f, 1.0f);

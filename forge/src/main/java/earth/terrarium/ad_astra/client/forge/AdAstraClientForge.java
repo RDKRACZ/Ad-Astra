@@ -1,11 +1,10 @@
 package earth.terrarium.ad_astra.client.forge;
 
 import earth.terrarium.ad_astra.client.AdAstraClient;
-import earth.terrarium.ad_astra.client.registry.ClientModBlockRenderers;
 import earth.terrarium.ad_astra.client.registry.ClientModEntities;
 import earth.terrarium.ad_astra.client.registry.ClientModKeybindings;
 import earth.terrarium.ad_astra.client.registry.ClientModParticles;
-import earth.terrarium.ad_astra.config.forge.ForgeMenuConfig;
+import earth.terrarium.ad_astra.common.config.forge.ForgeMenuConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
@@ -13,16 +12,10 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.common.MinecraftForge;
@@ -71,7 +64,6 @@ public class AdAstraClientForge {
         bus.addListener(AdAstraClientForge::spriteLoading);
         bus.addListener(AdAstraClientForge::onRegisterParticles);
         bus.addListener(AdAstraClientForge::chestSpriteLoading);
-        bus.addListener(AdAstraClientForge::onRegisterRenderers);
         bus.addListener(AdAstraClientForge::onRegisterLayerDefinitions);
         bus.addListener(AdAstraClientForge::onClientReloadListeners);
         MinecraftForge.EVENT_BUS.addListener(AdAstraClientForge::onRegisterClientHud);
@@ -80,15 +72,15 @@ public class AdAstraClientForge {
     }
 
     public static void postInit() {
-        AdAstraClient.onRegisterBlockRenderTypes(AdAstraClientForge::onRegisterBlockRenderTypes);
         AdAstraClient.onRegisterItemRenderers(AdAstraClientForge::registerItemRenderer);
         AdAstraClient.onRegisterFluidRenderTypes(AdAstraClientForge::onRegisterFluidRenderTypes);
+        AdAstraClient.onRegisterBlockRenderTypes(AdAstraClientForge::onRegisterBlockRenderTypes);
         hasInitializedRenderers = true;
     }
 
     public static void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase.equals(TickEvent.Phase.END)) {
-            ClientModKeybindings.onEndTick(Minecraft.getInstance());
+        if (event.phase.equals(TickEvent.Phase.START)) {
+            ClientModKeybindings.onStartTick(Minecraft.getInstance());
         }
     }
 
@@ -101,29 +93,17 @@ public class AdAstraClientForge {
         ClientModParticles.onRegisterParticles((type, provider) -> event.register(type, provider::create));
     }
 
-    private static void onRegisterBlockRenderTypes(RenderType type, List<Block> blocks) {
-        for (Block block : blocks) {
-            ItemBlockRenderTypes.setRenderLayer(block, type);
-        }
-    }
-
     private static void onRegisterFluidRenderTypes(RenderType type, Fluid fluid1, Fluid fluid2) {
         ItemBlockRenderTypes.setRenderLayer(fluid1, type);
         ItemBlockRenderTypes.setRenderLayer(fluid2, type);
     }
 
-    public static void onClientReloadListeners(RegisterClientReloadListenersEvent event) {
-        AdAstraClient.onRegisterReloadListeners((id, listener) -> event.registerReloadListener(listener));
+    private static void onRegisterBlockRenderTypes(RenderType type, List<Block> blocks) {
+        blocks.forEach(block -> ItemBlockRenderTypes.setRenderLayer(block, type));
     }
 
-
-    public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        ClientModBlockRenderers.registerBlockRenderers(new ClientModBlockRenderers.BlockRendererRegistry() {
-            @Override
-            public <T extends BlockEntity> void register(Supplier<? extends BlockEntityType<? extends T>> type, BlockEntityRendererProvider<T> factory) {
-                event.registerBlockEntityRenderer(type.get(), factory);
-            }
-        });
+    public static void onClientReloadListeners(RegisterClientReloadListenersEvent event) {
+        AdAstraClient.onRegisterReloadListeners((id, listener) -> event.registerReloadListener(listener));
     }
 
     public static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {

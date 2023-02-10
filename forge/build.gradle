@@ -7,53 +7,65 @@ architectury {
     forge()
 }
 
+sourceSets {
+    main {
+        resources {
+            srcDirs += project(":forge").file("src/generated/resources").absolutePath
+            exclude '.cache'
+        }
+    }
+}
+
 loom {
     accessWidenerPath = project(":common").loom.accessWidenerPath
-
     forge {
-        convertAccessWideners = true
         extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
-
-        mixinConfig "ad_astra-common.mixins.json"
-        mixinConfig "ad_astra.mixins.json"
+        mixinConfig "$project.mod_id-common.mixins.json"
+        mixinConfig "${project.mod_id}.mixins.json"
+        dataGen {
+            mod project.mod_id
+        }
+    }
+    runs {
+        data {
+            programArgs "--existing", project(":common").file("src/main/resources").absolutePath
+        }
     }
 }
 
 configurations {
     common
-    shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
+    shadowCommon
     compileClasspath.extendsFrom common
     runtimeClasspath.extendsFrom common
     developmentForge.extendsFrom common
 }
 
 dependencies {
-    forge "net.minecraftforge:forge:$rootProject.forge_version"
-    common(project(path: ":common", configuration: "namedElements")) { transitive = false }
+    forge "net.minecraftforge:forge:$rootProject.minecraft_version-$rootProject.forge_version"
+
+    common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 
-    include (modApi "earth.terrarium:botarium-forge-$rootProject.minecraft_version:$rootProject.botarium_version")
-    modApi "com.teamresourceful.resourcefullib:resourcefullib-forge-$resourcefullib_version"
+    modImplementation "vazkii.patchouli:Patchouli:$rootProject.minecraft_version-$rootProject.patchouli_version"
 
-    modApi("me.shedaniel.cloth:cloth-config-forge:$rootProject.cloth_config_version")
-    modImplementation "vazkii.patchouli:Patchouli:$rootProject.patchouli_version"
-
-    modCompileOnly "me.shedaniel:RoughlyEnoughItems-forge:$project.rei_version"
-    modCompileOnly("mezz.jei:jei-$rootProject.minecraft_version-forge-api:$rootProject.jei_version")
+    modCompileOnly "mezz.jei:jei-$rootProject.minecraft_version-forge-api:$rootProject.jei_version"
     modLocalRuntime("mezz.jei:jei-$rootProject.minecraft_version-forge:$rootProject.jei_version") { transitive = false }
+
+    modApi "com.teamresourceful.resourcefullib:resourcefullib-forge-$rootProject.minecraft_version:$rootProject.resourcefullib_version"
+    modApi "com.teamresourceful.resourcefulconfig:resourcefulconfig-forge-$rootProject.minecraft_version:$rootProject.resourcefulconfig_version"
+    modApi "earth.terrarium:botarium-forge-$rootProject.minecraft_version:$rootProject.botarium_version"
 }
 
 processResources {
-    inputs.property "version", project.version
-
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     filesMatching("META-INF/mods.toml") {
-        expand "version": project.version
+        expand "version": rootProject.version, "resourcefullib_version": rootProject.resourcefullib_version, "resourcefulconfig_version": rootProject.resourcefulconfig_version, "botarium_version": rootProject.botarium_version
     }
 }
 
 shadowJar {
     exclude "fabric.mod.json"
-    exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
     classifier "dev-shadow"
@@ -67,9 +79,11 @@ remapJar {
 
 jar {
     classifier "dev"
+    archivesBaseName = "$mod_id-forge-$minecraft_version"
 }
 
 sourcesJar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     def commonSources = project(":common").sourcesJar
     dependsOn commonSources
     from commonSources.archiveFile.map { zipTree(it) }
@@ -81,16 +95,44 @@ components.java {
     }
 }
 
+def ENV = System.getenv()
+
 publishing {
     publications {
-        mavenForge(MavenPublication) {
-            artifactId = rootProject.archives_base_name + "-" + project.name
-            from components.java
+        mavenJava(MavenPublication) {
+            artifact remapJar
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
+
+            artifactId = "$rootProject.mod_id-forge-$rootProject.minecraft_version"
+
+            pom {
+                name = 'Ad Astra'
+                description = 'Live long and prosper, Ad Astra!'
+                url = 'https://github.com/terrarium-earth/Ad-Astra'
+
+                scm {
+                    connection = 'git:https://github.com/terrarium-earth/Ad-Astra.git'
+                    developerConnection = 'git:https://github.com/terrarium-earth/Ad-Astra.git'
+                    url = 'https://github.com/terrarium-earth/Ad-Astra'
+                }
+
+                licenses {
+                    license {
+                        name = 'Terrarium Licence'
+                    }
+                }
+            }
         }
     }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
     repositories {
-        // Add repositories to publish to here.
+        maven {
+            url = "https://maven.resourcefulbees.com/repository/terrarium/"
+            credentials {
+                username ENV.MAVEN_USER
+                password ENV.MAVEN_PASS
+            }
+        }
     }
 }

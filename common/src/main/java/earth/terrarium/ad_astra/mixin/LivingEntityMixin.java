@@ -1,11 +1,11 @@
 package earth.terrarium.ad_astra.mixin;
 
-import earth.terrarium.ad_astra.entities.systems.EntityAcidRainSystem;
-import earth.terrarium.ad_astra.entities.systems.EntityOxygenSystem;
-import earth.terrarium.ad_astra.entities.systems.EntityTemperatureSystem;
-import earth.terrarium.ad_astra.entities.vehicles.Vehicle;
-import earth.terrarium.ad_astra.registry.ModTags;
-import earth.terrarium.ad_astra.util.ModUtils;
+import earth.terrarium.ad_astra.common.entity.system.EntityAcidRainSystem;
+import earth.terrarium.ad_astra.common.entity.system.EntityOxygenSystem;
+import earth.terrarium.ad_astra.common.entity.system.EntityTemperatureSystem;
+import earth.terrarium.ad_astra.common.entity.vehicle.Vehicle;
+import earth.terrarium.ad_astra.common.registry.ModTags;
+import earth.terrarium.ad_astra.common.util.ModUtils;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -31,7 +31,7 @@ public abstract class LivingEntityMixin {
             }
         }
 
-        if (fallDistance <= 3 / ModUtils.getPlanetGravity(entity.level)) {
+        if (fallDistance <= 3 / ModUtils.getEntityGravity(entity)) {
             cir.setReturnValue(false);
         }
     }

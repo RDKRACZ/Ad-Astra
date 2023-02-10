@@ -1,34 +1,31 @@
 package earth.terrarium.ad_astra.client.registry;
 
-import earth.terrarium.ad_astra.client.renderer.armour.JetSuitModel;
-import earth.terrarium.ad_astra.client.renderer.armour.NetheriteSpaceSuitModel;
-import earth.terrarium.ad_astra.client.renderer.armour.SpaceSuitModel;
+import earth.terrarium.ad_astra.client.renderer.armor.JetSuitModel;
+import earth.terrarium.ad_astra.client.renderer.armor.NetheriteSpaceSuitModel;
+import earth.terrarium.ad_astra.client.renderer.armor.SpaceSuitModel;
 import earth.terrarium.ad_astra.client.renderer.block.globe.GlobeModel;
-import earth.terrarium.ad_astra.client.renderer.entity.mobs.*;
-import earth.terrarium.ad_astra.client.renderer.entity.mobs.models.*;
-import earth.terrarium.ad_astra.client.renderer.entity.vehicles.lander.LanderModel;
-import earth.terrarium.ad_astra.client.renderer.entity.vehicles.lander.LanderRenderer;
-import earth.terrarium.ad_astra.client.renderer.entity.vehicles.rockets.tier_1.RocketModelTier1;
-import earth.terrarium.ad_astra.client.renderer.entity.vehicles.rockets.tier_1.RocketRendererTier1;
-import earth.terrarium.ad_astra.client.renderer.entity.vehicles.rockets.tier_2.RocketModelTier2;
-import earth.terrarium.ad_astra.client.renderer.entity.vehicles.rockets.tier_2.RocketRendererTier2;
-import earth.terrarium.ad_astra.client.renderer.entity.vehicles.rockets.tier_3.RocketModelTier3;
-import earth.terrarium.ad_astra.client.renderer.entity.vehicles.rockets.tier_3.RocketRendererTier3;
-import earth.terrarium.ad_astra.client.renderer.entity.vehicles.rockets.tier_4.RocketModelTier4;
-import earth.terrarium.ad_astra.client.renderer.entity.vehicles.rockets.tier_4.RocketRendererTier4;
-import earth.terrarium.ad_astra.client.renderer.entity.vehicles.rover.RoverModel;
-import earth.terrarium.ad_astra.client.renderer.entity.vehicles.rover.RoverRenderer;
-import earth.terrarium.ad_astra.registry.ModEntityTypes;
+import earth.terrarium.ad_astra.client.renderer.entity.mob.*;
+import earth.terrarium.ad_astra.client.renderer.entity.mob.model.*;
+import earth.terrarium.ad_astra.client.renderer.entity.vehicle.lander.LanderModel;
+import earth.terrarium.ad_astra.client.renderer.entity.vehicle.lander.LanderRenderer;
+import earth.terrarium.ad_astra.client.renderer.entity.vehicle.rocket.tier_1.RocketModelTier1;
+import earth.terrarium.ad_astra.client.renderer.entity.vehicle.rocket.tier_1.RocketRendererTier1;
+import earth.terrarium.ad_astra.client.renderer.entity.vehicle.rocket.tier_2.RocketModelTier2;
+import earth.terrarium.ad_astra.client.renderer.entity.vehicle.rocket.tier_2.RocketRendererTier2;
+import earth.terrarium.ad_astra.client.renderer.entity.vehicle.rocket.tier_3.RocketModelTier3;
+import earth.terrarium.ad_astra.client.renderer.entity.vehicle.rocket.tier_3.RocketRendererTier3;
+import earth.terrarium.ad_astra.client.renderer.entity.vehicle.rocket.tier_4.RocketModelTier4;
+import earth.terrarium.ad_astra.client.renderer.entity.vehicle.rocket.tier_4.RocketRendererTier4;
+import earth.terrarium.ad_astra.client.renderer.entity.vehicle.rover.RoverModel;
+import earth.terrarium.ad_astra.client.renderer.entity.vehicle.rover.RoverRenderer;
+import earth.terrarium.ad_astra.common.registry.ModEntityTypes;
 import earth.terrarium.botarium.client.ClientHooks;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.PaintingRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 
 import java.util.function.Supplier;
 
@@ -87,13 +84,7 @@ public class ClientModEntities {
         registry.register(JetSuitModel.LAYER_LOCATION, JetSuitModel::createBodyLayer);
     }
 
-    public static abstract class EntityRendererRegistry {
-        protected abstract <T extends Entity> void register(Supplier<? extends EntityType<? extends T>> type, EntityRendererProvider<T> factory);
-    }
-
     public static abstract class LayerDefinitionRegistry {
         public abstract void register(ModelLayerLocation location, Supplier<LayerDefinition> definition);
     }
-
-
 }

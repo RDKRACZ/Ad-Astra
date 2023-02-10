@@ -1,15 +1,17 @@
 modLoader = "javafml"
 loaderVersion = "[43,)"
+license = "Terrarium Licence"
 issueTrackerURL = "https://github.com/terrarium-earth/Ad-Astra/issues"
-license = "MIT"
 
 [[mods]]
 modId = "ad_astra"
 version = "${version}"
-displayName = "Ad Astra!"
-authors = " Alex Nijjar, Bunny, Checheno, CodexAdrian, Facu, Fizz, Kekie6, OliviaTheVampire, Shrimp, SpaceStar, Squishy, ThatGravyBoat"
-description = "Live long and prosper, Ad Astra!"
+displayName = "Ad Astra"
+displayURL = "https://www.curseforge.com/minecraft/mc-mods/ad-astra"
 logoFile = "icon.png"
+authors = "Alex Nijjar"
+credits = "CodexAdrian, Facu, Fizz, Giselle, Kekie6, Shrimp, SpaceStar, Squishy, ThatGravyBoat"
+description = "Live long and prosper, Ad Astra!"
 
 [[dependencies.ad_astra]]
 modId = "forge"
@@ -26,22 +28,22 @@ ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.ad_astra]]
-modId = "cloth_config"
+modId = "resourcefullib"
 mandatory = true
-versionRange = "[8.2.88,)"
-ordering = "AFTER"
+versionRange = "[${resourcefullib_version},)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.ad_astra]]
+modId = "resourcefulconfig"
+mandatory = true
+versionRange = "[${resourcefulconfig_version},)"
+ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.ad_astra]]
 modId = "botarium"
 mandatory = true
-versionRange = "[1.7.0,)"
-ordering = "NONE"
-side = "BOTH"
-
-[[dependencies.ad_astra]]
-modId = "resourcefullib"
-mandatory = true
-versionRange = "[1.1.15,)"
+versionRange = "[${botarium_version},)"
 ordering = "NONE"
 side = "BOTH"

@@ -2,26 +2,30 @@ package earth.terrarium.ad_astra.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import earth.terrarium.ad_astra.AdAstra;
 import earth.terrarium.ad_astra.client.registry.ClientModEntities;
 import earth.terrarium.ad_astra.client.registry.ClientModKeybindings;
 import earth.terrarium.ad_astra.client.registry.ClientModScreens;
-import earth.terrarium.ad_astra.client.renderer.armour.ArmourRenderers;
+import earth.terrarium.ad_astra.client.renderer.armor.ArmourRenderers;
 import earth.terrarium.ad_astra.client.renderer.block.ChestItemRenderer;
+import earth.terrarium.ad_astra.client.renderer.block.EnergizerBlockEntityRenderer;
 import earth.terrarium.ad_astra.client.renderer.block.SlidingDoorBlockEntityRenderer;
+import earth.terrarium.ad_astra.client.renderer.block.flag.FlagBlockEntityRenderer;
 import earth.terrarium.ad_astra.client.renderer.block.flag.FlagItemRenderer;
+import earth.terrarium.ad_astra.client.renderer.block.globe.GlobeBlockEntityRenderer;
 import earth.terrarium.ad_astra.client.renderer.block.globe.GlobeItemRenderer;
-import earth.terrarium.ad_astra.client.renderer.entity.vehicles.rockets.tier_1.RocketItemRendererTier1;
-import earth.terrarium.ad_astra.client.renderer.entity.vehicles.rockets.tier_2.RocketItemRendererTier2;
-import earth.terrarium.ad_astra.client.renderer.entity.vehicles.rockets.tier_3.RocketItemRendererTier3;
-import earth.terrarium.ad_astra.client.renderer.entity.vehicles.rockets.tier_4.RocketItemRendererTier4;
-import earth.terrarium.ad_astra.client.renderer.entity.vehicles.rover.RoverItemRenderer;
+import earth.terrarium.ad_astra.client.renderer.entity.vehicle.rocket.tier_1.RocketItemRendererTier1;
+import earth.terrarium.ad_astra.client.renderer.entity.vehicle.rocket.tier_2.RocketItemRendererTier2;
+import earth.terrarium.ad_astra.client.renderer.entity.vehicle.rocket.tier_3.RocketItemRendererTier3;
+import earth.terrarium.ad_astra.client.renderer.entity.vehicle.rocket.tier_4.RocketItemRendererTier4;
+import earth.terrarium.ad_astra.client.renderer.entity.vehicle.rover.RoverItemRenderer;
 import earth.terrarium.ad_astra.client.resourcepack.*;
-import earth.terrarium.ad_astra.client.screens.PlayerOverlayScreen;
-import earth.terrarium.ad_astra.data.Planet;
-import earth.terrarium.ad_astra.registry.ModBlocks;
-import earth.terrarium.ad_astra.registry.ModFluids;
-import earth.terrarium.ad_astra.registry.ModItems;
-import earth.terrarium.ad_astra.util.ModResourceLocation;
+import earth.terrarium.ad_astra.client.screen.PlayerOverlayScreen;
+import earth.terrarium.ad_astra.common.registry.ModBlockEntityTypes;
+import earth.terrarium.ad_astra.common.registry.ModBlocks;
+import earth.terrarium.ad_astra.common.registry.ModFluids;
+import earth.terrarium.ad_astra.common.registry.ModItems;
+import earth.terrarium.botarium.client.ClientHooks;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -30,14 +34,14 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.blockentity.ChestRenderer;
+import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelManager;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
@@ -51,30 +55,31 @@ import java.util.function.Consumer;
 @Environment(EnvType.CLIENT)
 public class AdAstraClient {
 
-    public static List<Planet> planets = new ArrayList<>();
+    public static boolean hasUpdatedPlanets;
     public static List<SolarSystem> solarSystems = new ArrayList<>();
     public static List<PlanetSkyRenderer> skyRenderers = new ArrayList<>();
     public static List<PlanetRing> planetRings = new ArrayList<>();
     public static List<Galaxy> galaxies = new ArrayList<>();
 
-    public static void initializeClient() {
+    public static void init() {
         ClientModScreens.init();
         ClientModKeybindings.init();
         ArmourRenderers.init();
         ClientModEntities.registerEntityRenderers();
 
+        ClientHooks.registerBlockEntityRenderers(ModBlockEntityTypes.FLAG.get(), FlagBlockEntityRenderer::new);
+        ClientHooks.registerBlockEntityRenderers(ModBlockEntityTypes.GLOBE.get(), GlobeBlockEntityRenderer::new);
+        ClientHooks.registerBlockEntityRenderers(ModBlockEntityTypes.ENERGIZER.get(), EnergizerBlockEntityRenderer::new);
+        ClientHooks.registerBlockEntityRenderers(ModBlockEntityTypes.SLIDING_DOOR.get(), SlidingDoorBlockEntityRenderer::new);
+        ClientHooks.registerBlockEntityRenderers(ModBlockEntityTypes.SIGN.get(), SignRenderer::new);
+        ClientHooks.registerBlockEntityRenderers(ModBlockEntityTypes.CHEST.get(), ChestRenderer::new);
+
         // Sign textures
-        Sheets.SIGN_MATERIALS.put(ModBlocks.GLACIAN, new Material(Sheets.SIGN_SHEET, new ModResourceLocation("entity/signs/glacian")));
+        Sheets.SIGN_MATERIALS.put(ModBlocks.GLACIAN_SIGN_TYPE, new Material(Sheets.SIGN_SHEET, new ResourceLocation(AdAstra.MOD_ID, "entity/signs/glacian")));
     }
 
     public static void onRegisterHud(Consumer<RenderHud> register) {
         register.accept(PlayerOverlayScreen::render);
-    }
-
-    public static void onRegisterBlockRenderTypes(BiConsumer<RenderType, List<Block>> register) {
-        register.accept(RenderType.cutout(), List.of(ModBlocks.WATER_PUMP.get(), ModBlocks.ENERGIZER.get(), ModBlocks.STEEL_DOOR.get(), ModBlocks.GLACIAN_DOOR.get(), ModBlocks.GLACIAN_TRAPDOOR.get(), ModBlocks.AERONOS_DOOR.get(), ModBlocks.AERONOS_TRAPDOOR.get(), ModBlocks.STROPHAR_DOOR.get(), ModBlocks.STROPHAR_TRAPDOOR.get(), ModBlocks.EXTINGUISHED_TORCH.get(), ModBlocks.WALL_EXTINGUISHED_TORCH.get(), ModBlocks.STEEL_TRAPDOOR.get()));
-        register.accept(RenderType.translucent(), List.of(ModBlocks.EXTINGUISHED_LANTERN.get(), ModBlocks.GLACIAN_LEAVES.get()));
-        register.accept(RenderType.cutout(), List.of(ModBlocks.AERONOS_MUSHROOM.get(), ModBlocks.STROPHAR_MUSHROOM.get(), ModBlocks.AERONOS_LADDER.get(), ModBlocks.STROPHAR_LADDER.get(), ModBlocks.AERONOS_CHEST.get(), ModBlocks.STROPHAR_CHEST.get()));
     }
 
     public static void onRegisterFluidRenderTypes(TriConsumer<RenderType, Fluid, Fluid> register) {
@@ -82,6 +87,17 @@ public class AdAstraClient {
         register.accept(RenderType.translucent(), ModFluids.CRYO_FUEL.get(), ModFluids.FLOWING_CRYO_FUEL.get());
         register.accept(RenderType.translucent(), ModFluids.OIL.get(), ModFluids.FLOWING_OIL.get());
         register.accept(RenderType.translucent(), ModFluids.OXYGEN.get(), ModFluids.FLOWING_OXYGEN.get());
+    }
+
+    public static void onRegisterBlockRenderTypes(BiConsumer<RenderType, List<Block>> register) {
+        ModBlocks.GLOBES.stream().forEach(block -> register.accept(RenderType.cutout(), List.of(block.get())));
+        register.accept(RenderType.cutout(), List.of(
+                ModBlocks.WATER_PUMP.get(), ModBlocks.ENERGIZER.get(), ModBlocks.STEEL_DOOR.get(), ModBlocks.STEEL_TRAPDOOR.get(), ModBlocks.GLACIAN_DOOR.get(),
+                ModBlocks.GLACIAN_TRAPDOOR.get(), ModBlocks.AERONOS_DOOR.get(), ModBlocks.AERONOS_TRAPDOOR.get(), ModBlocks.STROPHAR_DOOR.get(), ModBlocks.STROPHAR_TRAPDOOR.get(),
+                ModBlocks.EXTINGUISHED_TORCH.get(), ModBlocks.WALL_EXTINGUISHED_TORCH.get(), ModBlocks.EXTINGUISHED_LANTERN.get(), ModBlocks.GLACIAN_LEAVES.get(),
+                ModBlocks.NASA_WORKBENCH.get(), ModBlocks.AERONOS_MUSHROOM.get(), ModBlocks.STROPHAR_MUSHROOM.get(), ModBlocks.AERONOS_LADDER.get(), ModBlocks.STROPHAR_LADDER.get(),
+                ModBlocks.AERONOS_CHEST.get(), ModBlocks.STROPHAR_CHEST.get()
+        ));
     }
 
     public static void onRegisterItemRenderers(BiConsumer<ItemLike, BlockEntityWithoutLevelRenderer> register) {
@@ -94,55 +110,47 @@ public class AdAstraClient {
         register.accept(ModBlocks.AERONOS_CHEST.get(), new ChestItemRenderer(ModBlocks.AERONOS_CHEST.get()));
         register.accept(ModBlocks.STROPHAR_CHEST.get(), new ChestItemRenderer(ModBlocks.STROPHAR_CHEST.get()));
 
-        for (Item item : new Item[]{ModItems.EARTH_GLOBE.get(), ModItems.MOON_GLOBE.get(), ModItems.MARS_GLOBE.get(), ModItems.MERCURY_GLOBE.get(), ModItems.VENUS_GLOBE.get(), ModItems.GLACIO_GLOBE.get()}) {
-            register.accept(item, new GlobeItemRenderer());
-        }
-
-        for (Item item : new Item[]{ModItems.WHITE_FLAG.get(), ModItems.BLACK_FLAG.get(), ModItems.BLUE_FLAG.get(), ModItems.BROWN_FLAG.get(), ModItems.CYAN_FLAG.get(), ModItems.GRAY_FLAG.get(), ModItems.GREEN_FLAG.get(), ModItems.LIGHT_BLUE_FLAG.get(), ModItems.LIGHT_GRAY_FLAG.get(), ModItems.LIME_FLAG.get(), ModItems.MAGENTA_FLAG.get(), ModItems.ORANGE_FLAG.get(), ModItems.PINK_FLAG.get(), ModItems.PURPLE_FLAG.get(), ModItems.RED_FLAG.get(), ModItems.YELLOW_FLAG.get()}) {
-            register.accept(item, new FlagItemRenderer());
-        }
+        ModItems.GLOBES.stream().forEach(item -> register.accept(item.get(), new GlobeItemRenderer()));
+        ModItems.FLAGS.stream().forEach(item -> register.accept(item.get(), new FlagItemRenderer()));
     }
 
     public static void onRegisterReloadListeners(BiConsumer<ResourceLocation, PreparableReloadListener> registry) {
-        registry.accept(new ModResourceLocation("planet_resources"), new PlanetResources());
+        registry.accept(new ResourceLocation(AdAstra.MOD_ID, "planet_resources"), new PlanetResources());
     }
 
     public static void onRegisterChestSprites(Consumer<ResourceLocation> register) {
-        register.accept(new ModResourceLocation("entity/chest/aeronos_chest"));
-        register.accept(new ModResourceLocation("entity/chest/aeronos_chest_right"));
-        register.accept(new ModResourceLocation("entity/chest/aeronos_chest_left"));
-        register.accept(new ModResourceLocation("entity/chest/strophar_chest"));
-        register.accept(new ModResourceLocation("entity/chest/strophar_chest_right"));
-        register.accept(new ModResourceLocation("entity/chest/strophar_chest_left"));
+        register.accept(new ResourceLocation(AdAstra.MOD_ID, "entity/chest/aeronos_chest"));
+        register.accept(new ResourceLocation(AdAstra.MOD_ID, "entity/chest/aeronos_chest_right"));
+        register.accept(new ResourceLocation(AdAstra.MOD_ID, "entity/chest/aeronos_chest_left"));
+        register.accept(new ResourceLocation(AdAstra.MOD_ID, "entity/chest/strophar_chest"));
+        register.accept(new ResourceLocation(AdAstra.MOD_ID, "entity/chest/strophar_chest_right"));
+        register.accept(new ResourceLocation(AdAstra.MOD_ID, "entity/chest/strophar_chest_left"));
     }
 
     public static void onRegisterSprites(Consumer<ResourceLocation> register) {
-        register.accept(new ModResourceLocation("particle/flame_1"));
-        register.accept(new ModResourceLocation("particle/flame_2"));
-        register.accept(new ModResourceLocation("particle/flame_3"));
-        register.accept(new ModResourceLocation("particle/flame_4"));
-        register.accept(new ModResourceLocation("particle/venus_rain_1"));
-        register.accept(new ModResourceLocation("particle/venus_rain_2"));
-        register.accept(new ModResourceLocation("particle/venus_rain_3"));
-        register.accept(new ModResourceLocation("particle/venus_rain_4"));
+        register.accept(new ResourceLocation(AdAstra.MOD_ID, "particle/flame_1"));
+        register.accept(new ResourceLocation(AdAstra.MOD_ID, "particle/flame_2"));
+        register.accept(new ResourceLocation(AdAstra.MOD_ID, "particle/flame_3"));
+        register.accept(new ResourceLocation(AdAstra.MOD_ID, "particle/flame_4"));
+        register.accept(new ResourceLocation(AdAstra.MOD_ID, "particle/venus_rain_1"));
+        register.accept(new ResourceLocation(AdAstra.MOD_ID, "particle/venus_rain_2"));
+        register.accept(new ResourceLocation(AdAstra.MOD_ID, "particle/venus_rain_3"));
+        register.accept(new ResourceLocation(AdAstra.MOD_ID, "particle/venus_rain_4"));
     }
 
     public static void onRegisterModels(Consumer<ResourceLocation> register) {
-        for (Item item : new Item[]{ModItems.WHITE_FLAG.get(), ModItems.BLACK_FLAG.get(), ModItems.BLUE_FLAG.get(), ModItems.BROWN_FLAG.get(), ModItems.CYAN_FLAG.get(), ModItems.GRAY_FLAG.get(), ModItems.GREEN_FLAG.get(), ModItems.LIGHT_BLUE_FLAG.get(), ModItems.LIGHT_GRAY_FLAG.get(), ModItems.LIME_FLAG.get(), ModItems.MAGENTA_FLAG.get(), ModItems.ORANGE_FLAG.get(), ModItems.PINK_FLAG.get(), ModItems.PURPLE_FLAG.get(), ModItems.RED_FLAG.get(), ModItems.YELLOW_FLAG.get()}) {
-            register.accept(new ModResourceLocation("block/flag/" + Registry.ITEM.getKey(item).getPath()));
-        }
-        for (ResourceLocation id : new ResourceLocation[]{SlidingDoorBlockEntityRenderer.IRON_SLIDING_DOOR_MODEL, SlidingDoorBlockEntityRenderer.STEEL_SLIDING_DOOR_MODEL, SlidingDoorBlockEntityRenderer.DESH_SLIDING_DOOR_MODEL, SlidingDoorBlockEntityRenderer.OSTRUM_SLIDING_DOOR_MODEL, SlidingDoorBlockEntityRenderer.CALORITE_SLIDING_DOOR_MODEL, SlidingDoorBlockEntityRenderer.AIRLOCK_MODEL, SlidingDoorBlockEntityRenderer.REINFORCED_DOOR_MODEL, SlidingDoorBlockEntityRenderer.IRON_SLIDING_DOOR_MODEL_FLIPPED, SlidingDoorBlockEntityRenderer.STEEL_SLIDING_DOOR_MODEL_FLIPPED, SlidingDoorBlockEntityRenderer.DESH_SLIDING_DOOR_MODEL_FLIPPED, SlidingDoorBlockEntityRenderer.OSTRUM_SLIDING_DOOR_MODEL_FLIPPED, SlidingDoorBlockEntityRenderer.CALORITE_SLIDING_MODEL_FLIPPED, SlidingDoorBlockEntityRenderer.AIRLOCK_MODEL_FLIPPED, SlidingDoorBlockEntityRenderer.REINFORCED_DOOR_MODEL_FLIPPED}) {
-            register.accept(id);
-        }
+        ModBlocks.FLAGS.stream().forEach(block -> register.accept(new ResourceLocation(AdAstra.MOD_ID, "block/flag/" + block.getId().getPath())));
+        ModBlocks.SLIDING_DOORS.stream().forEach(block -> register.accept(new ResourceLocation(AdAstra.MOD_ID, "block/door/" + block.getId().getPath())));
+        ModBlocks.SLIDING_DOORS.stream().forEach(block -> register.accept(new ResourceLocation(AdAstra.MOD_ID, "block/door/" + block.getId().getPath() + "_flipped")));
     }
 
-    public static void renderBlock(ResourceLocation texture, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
-        Minecraft client = Minecraft.getInstance();
-        ModelManager manager = client.getModelManager();
-        BakedModel model = ClientUtils.getModel(manager, texture);
+    public static void renderBlock(ResourceLocation model, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
+        Minecraft minecraft = Minecraft.getInstance();
+        ModelManager manager = minecraft.getModelManager();
+        BakedModel baked = ClientPlatformUtils.getModel(manager, model);
 
         VertexConsumer vertexConsumer1 = buffer.getBuffer(RenderType.entityCutout(InventoryMenu.BLOCK_ATLAS));
-        List<BakedQuad> quads1 = model.getQuads(null, null, client.level.random);
+        List<BakedQuad> quads1 = baked.getQuads(null, null, minecraft.level.random);
         PoseStack.Pose entry1 = poseStack.last();
 
         for (BakedQuad quad : quads1) {

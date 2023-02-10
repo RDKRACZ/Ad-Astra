@@ -1,8 +1,8 @@
 package earth.terrarium.ad_astra.mixin.forge;
 
 import earth.terrarium.ad_astra.client.forge.AdAstraClientForge;
-import earth.terrarium.ad_astra.items.ModRenderedBlockItem;
-import earth.terrarium.ad_astra.items.ModRenderedItem;
+import earth.terrarium.ad_astra.common.item.ModRenderedBlockItem;
+import earth.terrarium.ad_astra.common.item.ModRenderedItem;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
@@ -13,8 +13,8 @@ import java.util.function.Consumer;
 @Mixin({ModRenderedItem.class, ModRenderedBlockItem.class})
 public abstract class ModRenderedItemMixin extends Item {
 
-    public ModRenderedItemMixin(Properties settings) {
-        super(settings);
+    public ModRenderedItemMixin(Properties properties) {
+        super(properties);
     }
 
     @Override

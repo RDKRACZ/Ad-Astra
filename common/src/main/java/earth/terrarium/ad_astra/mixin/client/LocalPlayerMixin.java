@@ -1,14 +1,14 @@
 package earth.terrarium.ad_astra.mixin.client;
 
-import earth.terrarium.ad_astra.client.screens.PlayerOverlayScreen;
+import earth.terrarium.ad_astra.client.screen.PlayerOverlayScreen;
 import earth.terrarium.ad_astra.client.sound.PlanetSoundPlayer;
 import earth.terrarium.ad_astra.client.sound.PlanetWeatherSoundPlayer;
-import earth.terrarium.ad_astra.entities.vehicles.Lander;
-import earth.terrarium.ad_astra.entities.vehicles.Rocket;
-import earth.terrarium.ad_astra.entities.vehicles.Vehicle;
-import earth.terrarium.ad_astra.items.armour.JetSuit;
-import earth.terrarium.ad_astra.items.armour.SpaceSuit;
-import earth.terrarium.ad_astra.util.OxygenUtils;
+import earth.terrarium.ad_astra.common.entity.vehicle.Lander;
+import earth.terrarium.ad_astra.common.entity.vehicle.Rocket;
+import earth.terrarium.ad_astra.common.entity.vehicle.Vehicle;
+import earth.terrarium.ad_astra.common.item.armor.JetSuit;
+import earth.terrarium.ad_astra.common.item.armor.SpaceSuit;
+import earth.terrarium.ad_astra.common.util.OxygenUtils;
 import earth.terrarium.botarium.api.fluid.FluidHooks;
 import earth.terrarium.botarium.api.fluid.PlatformFluidItemHandler;
 import net.minecraft.client.ClientRecipeBook;
@@ -38,9 +38,9 @@ public class LocalPlayerMixin {
     private List<AmbientSoundHandler> ambientSoundHandlers;
 
     @Inject(at = @At(value = "TAIL"), method = "<init>")
-    public void adastra_ClientPlayerEntity(Minecraft client, ClientLevel level, ClientPacketListener networkHandler, StatsCounter stats, ClientRecipeBook recipeBook, boolean lastSneaking, boolean lastSprinting, CallbackInfo ci) {
-        this.ambientSoundHandlers.add(new PlanetWeatherSoundPlayer((LocalPlayer) (Object) (this), client.getSoundManager()));
-        this.ambientSoundHandlers.add(new PlanetSoundPlayer((LocalPlayer) (Object) (this), client.getSoundManager()));
+    public void adastra_LocalPlayer(Minecraft minecraft, ClientLevel level, ClientPacketListener networkHandler, StatsCounter stats, ClientRecipeBook recipeBook, boolean lastSneaking, boolean lastSprinting, CallbackInfo ci) {
+        this.ambientSoundHandlers.add(new PlanetWeatherSoundPlayer((LocalPlayer) (Object) (this), minecraft.getSoundManager()));
+        this.ambientSoundHandlers.add(new PlanetSoundPlayer((LocalPlayer) (Object) (this), minecraft.getSoundManager()));
 
     }
 
@@ -52,7 +52,7 @@ public class LocalPlayerMixin {
 
         if (SpaceSuit.hasFullSet(player)) {
             PlayerOverlayScreen.shouldRenderOxygen = true;
-            if (chest.getItem() instanceof SpaceSuit suit) {
+            if (!chest.isEmpty() && chest.getItem() instanceof SpaceSuit suit) {
                 PlatformFluidItemHandler oxygen = FluidHooks.getItemFluidManager(chest);
 
                 // Render oxygen info
@@ -65,7 +65,7 @@ public class LocalPlayerMixin {
 
         if (JetSuit.hasFullSet(player)) {
             PlayerOverlayScreen.shouldRenderBattery = true;
-            if (chest.getItem() instanceof JetSuit) {
+            if (!chest.isEmpty() && chest.getItem() instanceof JetSuit) {
                 JetSuit.updateBatteryOverlay(chest);
             }
         } else {
@@ -94,7 +94,6 @@ public class LocalPlayerMixin {
                     PlayerOverlayScreen.disableAllVehicleOverlays();
                 }
             }
-
         } else {
             PlayerOverlayScreen.disableAllVehicleOverlays();
         }

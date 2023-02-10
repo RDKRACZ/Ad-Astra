@@ -1,7 +1,7 @@
 package earth.terrarium.ad_astra.mixin.gravity;
 
-import earth.terrarium.ad_astra.AdAstra;
-import earth.terrarium.ad_astra.util.ModUtils;
+import earth.terrarium.ad_astra.common.config.AdAstraConfig;
+import earth.terrarium.ad_astra.common.util.ModUtils;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.ThrownPotion;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class ThrownPotionMixin {
     @Inject(method = "getGravity", at = @At("HEAD"), cancellable = true)
     public void adastra_getGravity(CallbackInfoReturnable<Float> cir) {
-        if (AdAstra.CONFIG.general.doEntityGravity) {
-            cir.setReturnValue(0.05f * ModUtils.getPlanetGravity(((Entity) (Object) this).getLevel()));
+        if (AdAstraConfig.doEntityGravity) {
+            cir.setReturnValue(0.05f * ModUtils.getEntityGravity((Entity) (Object) this));
         }
     }
 }

@@ -1,9 +1,9 @@
 package earth.terrarium.ad_astra.mixin.client;
 
 import earth.terrarium.ad_astra.AdAstra;
-import earth.terrarium.ad_astra.util.ModResourceLocation;
-import earth.terrarium.ad_astra.util.ModUtils;
-import earth.terrarium.ad_astra.util.OxygenUtils;
+import earth.terrarium.ad_astra.common.config.AdAstraConfig;
+import earth.terrarium.ad_astra.common.util.ModUtils;
+import earth.terrarium.ad_astra.common.util.OxygenUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.Sound;
 import net.minecraft.client.resources.sounds.SoundInstance;
@@ -113,14 +113,20 @@ public class SoundManagerMixin {
 
     @Unique
     private void adastra_modifySound(SoundInstance sound, int delay, CallbackInfo ci) {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.level == null) {
+            return;
+        }
+
+        if (!AdAstraConfig.doSpaceMuffler) {
+            return;
+        }
+
         if (sound.getSource().equals(SoundSource.MASTER)) {
             return;
         }
 
-        if (!AdAstra.CONFIG.general.doSpaceMuffler) {
-            return;
-        }
-        if (sound.getLocation().equals(new ModResourceLocation("rocket_fly"))) {
+        if (sound.getLocation().equals(new ResourceLocation(AdAstra.MOD_ID, "rocket_fly"))) {
             return;
         }
 
@@ -128,18 +134,9 @@ public class SoundManagerMixin {
             return;
         }
 
-        if (!AdAstra.CONFIG.general.doSpaceMuffler) {
-            return;
-        }
-
-        Minecraft client = Minecraft.getInstance();
-        if (client.level == null) {
-            return;
-        }
-
-        if (ModUtils.isOrbitlevel(client.level)) {
-            boolean noOxygen = !OxygenUtils.posHasOxygen(client.level, new BlockPos(sound.getX(), sound.getY(), sound.getZ()));
-            if (client.level != null && noOxygen || sound.getSource().equals(SoundSource.MUSIC) || sound.getSource().equals(SoundSource.RECORDS) || sound.getSource().equals(SoundSource.AMBIENT)) {
+        if (ModUtils.isOrbitlevel(minecraft.level)) {
+            boolean noOxygen = !OxygenUtils.posHasOxygen(minecraft.level, new BlockPos(sound.getX(), sound.getY(), sound.getZ()));
+            if (minecraft.level != null && noOxygen || sound.getSource().equals(SoundSource.MUSIC) || sound.getSource().equals(SoundSource.RECORDS) || sound.getSource().equals(SoundSource.AMBIENT)) {
                 ci.cancel();
                 SoundInstance newSound = getSpaceSoundInstance(sound, ((sound.getSource().equals(SoundSource.MUSIC) || sound.getSource().equals(SoundSource.RECORDS) || sound.getSource().equals(SoundSource.AMBIENT)) ? 1.0f : 0.1f), 0.1f);
                 this.soundEngine.play(newSound);

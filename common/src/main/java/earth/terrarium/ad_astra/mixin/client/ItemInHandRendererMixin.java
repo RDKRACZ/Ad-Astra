@@ -1,8 +1,8 @@
 package earth.terrarium.ad_astra.mixin.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import earth.terrarium.ad_astra.entities.vehicles.Vehicle;
-import earth.terrarium.ad_astra.items.vehicles.VehicleItem;
+import earth.terrarium.ad_astra.common.entity.vehicle.Vehicle;
+import earth.terrarium.ad_astra.common.item.vehicle.VehicleItem;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -35,7 +35,8 @@ public class ItemInHandRendererMixin {
 
                 // Only render the main hand stack if the player is holding a vehicle in both the main hand and offhand
                 Item mainStack = livingEntity.getMainHandItem().getItem();
-                if (leftHand && itemStack.getItem().equals(livingEntity.getOffhandItem().getItem()) && mainStack instanceof VehicleItem) {
+                ItemStack offhandStack = livingEntity.getOffhandItem();
+                if (!offhandStack.isEmpty() && leftHand && itemStack.getItem().equals(offhandStack.getItem()) && mainStack instanceof VehicleItem) {
                     ci.cancel();
                 }
             }

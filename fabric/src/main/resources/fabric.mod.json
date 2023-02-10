@@ -2,55 +2,52 @@
   "schemaVersion": 1,
   "id": "ad_astra",
   "version": "${version}",
-  "name": "Ad Astra!",
+  "name": "Ad Astra",
   "description": "Live long and prosper, Ad Astra!",
   "authors": [
-    "Alex Nijjar",
-    "Bunny",
-    "Checheno",
+    "Alex Nijjar"
+  ],
+  "contributors": [
     "CodexAdrian",
     "Facu",
     "Fizz",
+    "Giselle",
     "Kekie6",
-    "OliviaTheVampire",
     "Shrimp",
     "SpaceStar",
     "Squishy",
     "ThatGravyBoat"
   ],
   "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/ad-astra",
-    "sources": "https://github.com/terrarium-earth/Ad-Astra"
+    "website": "https://www.curseforge.com/minecraft/mc-mods/ad-astra",
+    "repo": "https://github.com/terrarium-earth/Ad-Astra",
+    "issues": "https://github.com/terrarium-earth/Ad-Astra/issues"
   },
-  "license": "MIT",
+  "license": "Terrarium Licence",
   "icon": "icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "earth.terrarium.ad_astra.fabric.AdAstraFabric"
+      "earth.terrarium.ad_astra.fabric.AdAstraFabric",
+      "earth.terrarium.ad_astra.AdAstra::postInit"
     ],
     "client": [
-      "earth.terrarium.ad_astra.client.fabric.AdAstraClientFabric::initializeClient",
-      "earth.terrarium.ad_astra.client.AdAstraClient::initializeClient",
-      "earth.terrarium.ad_astra.AdAstra::postInit"
-    ],
-    "server": [
-      "earth.terrarium.ad_astra.AdAstra::postInit"
-    ],
-    "modmenu": [
-      "earth.terrarium.ad_astra.config.fabric.ModMenuConfig"
-    ],
-    "emi": [
-      "earth.terrarium.ad_astra.compat.emi.AdAstraEmiPlugin"
-    ],
-    "rei_client": [
-      "earth.terrarium.ad_astra.compat.rei.AdAstraReiPlugin"
+      "earth.terrarium.ad_astra.client.fabric.AdAstraClientFabric"
     ],
     "jei_mod_plugin": [
-      "earth.terrarium.ad_astra.compat.jei.AdAstraJeiPlugin"
+      "earth.terrarium.ad_astra.common.compat.jei.AdAstraJeiPlugin"
     ],
-    "fabric-datagen": [
-      "earth.terrarium.ad_astra.datagen.AdAstraDataGenEntrypoint"
+    "rei_client": [
+      "earth.terrarium.ad_astra.common.compat.rei.AdAstraReiPlugin"
+    ],
+    "rei_common": [
+      "earth.terrarium.ad_astra.common.compat.rei.AdAstraReiCommonPlugin"
+    ],
+    "emi": [
+      "earth.terrarium.ad_astra.common.compat.emi.AdAstraEmiPlugin"
+    ],
+    "modmenu": [
+      "earth.terrarium.ad_astra.common.config.fabric.ModMenuConfig"
     ]
   },
   "mixins": [
@@ -58,10 +55,10 @@
     "ad_astra-common.mixins.json"
   ],
   "depends": {
-    "fabric": "*",
+    "fabricloader": ">=0.14.12",
     "minecraft": ">=1.19",
-    "cloth-config": ">=8.2.88",
-    "botarium": ">=1.7.0",
-    "resourcefullib": ">=1.1.15"
+    "resourcefullib": ">=${resourcefullib_version}",
+    "resourcefulconfig": ">=${resourcefulconfig_version}",
+    "botarium": ">=${botarium_version}"
   }
 }

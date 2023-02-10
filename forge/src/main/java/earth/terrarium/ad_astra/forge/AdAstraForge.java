@@ -3,12 +3,10 @@ package earth.terrarium.ad_astra.forge;
 import earth.terrarium.ad_astra.AdAstra;
 import earth.terrarium.ad_astra.client.AdAstraClient;
 import earth.terrarium.ad_astra.client.forge.AdAstraClientForge;
-import earth.terrarium.ad_astra.items.AstroduxItem;
-import earth.terrarium.ad_astra.networking.NetworkHandling;
-import earth.terrarium.ad_astra.registry.ModCommands;
-import earth.terrarium.ad_astra.registry.ModEntityTypes;
-import earth.terrarium.ad_astra.registry.forge.ModRegistryHelpersImpl;
-import earth.terrarium.ad_astra.util.ModKeyBindings;
+import earth.terrarium.ad_astra.common.item.AstroduxItem;
+import earth.terrarium.ad_astra.common.registry.ModCommands;
+import earth.terrarium.ad_astra.common.registry.ModEntityTypes;
+import earth.terrarium.ad_astra.common.util.ModKeyBindings;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -35,7 +33,6 @@ public class AdAstraForge {
         MinecraftForge.EVENT_BUS.addListener(AdAstraForge::onRegisterCommands);
         MinecraftForge.EVENT_BUS.addListener(AdAstraForge::onPlayerLogIn);
         MinecraftForge.EVENT_BUS.addListener(AdAstraForge::onPlayerLogOut);
-        ModRegistryHelpersImpl.REGISTRIES.values().forEach(deferredRegister -> deferredRegister.register(bus));
     }
 
     public static void onServerReloadListeners(AddReloadListenerEvent event) {
@@ -47,7 +44,7 @@ public class AdAstraForge {
     }
 
     public static void onClientSetup(FMLClientSetupEvent event) {
-        AdAstraClient.initializeClient();
+        AdAstraClient.init();
         AdAstraClientForge.postInit();
     }
 
@@ -61,7 +58,6 @@ public class AdAstraForge {
 
     public static void onPlayerLogIn(PlayerEvent.PlayerLoggedInEvent event) {
         AstroduxItem.onPlayerJoin(event.getEntity());
-        NetworkHandling.onPlayerJoin(event.getEntity());
     }
 
     public static void onPlayerLogOut(PlayerEvent.PlayerLoggedOutEvent event) {

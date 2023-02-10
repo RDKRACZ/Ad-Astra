@@ -1,6 +1,6 @@
 package earth.terrarium.ad_astra.mixin.gravity;
 
-import earth.terrarium.ad_astra.util.ModUtils;
+import earth.terrarium.ad_astra.common.util.ModUtils;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
@@ -23,12 +23,12 @@ public abstract class CommonGravityEntityMixin {
         Entity entity = (Entity) (Object) this;
         if (!entity.isNoGravity()) {
             Vec3 velocity = entity.getDeltaMovement();
-            double newGravity = CONSTANT * ModUtils.getPlanetGravity(entity.level);
+            double newGravity = CONSTANT * ModUtils.getEntityGravity(entity);
             entity.setDeltaMovement(velocity.x(), velocity.y() - CONSTANT + newGravity, velocity.z());
         }
 
         if (entity instanceof AbstractMinecart && entity.getY() < entity.level.getMinBuildHeight() && ModUtils.isOrbitlevel(entity.level)) {
-            ModUtils.teleportTolevel(ModUtils.getPlanetOrbit(entity.level), entity);
+            ModUtils.teleportToLevel(ModUtils.getPlanetOrbit(entity.level), entity);
         }
     }
 }

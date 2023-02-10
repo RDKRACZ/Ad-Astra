@@ -1,7 +1,7 @@
 package earth.terrarium.ad_astra.mixin.oxygen;
 
-import earth.terrarium.ad_astra.AdAstra;
-import earth.terrarium.ad_astra.util.OxygenUtils;
+import earth.terrarium.ad_astra.common.config.AdAstraConfig;
+import earth.terrarium.ad_astra.common.util.OxygenUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -19,7 +19,7 @@ public abstract class FireBlockMixin {
 
     @Inject(method = "onPlace", at = @At(value = "HEAD"))
     public void adastra_onBlockAdded(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean notify, CallbackInfo ci) {
-        if (!AdAstra.CONFIG.general.doOxygen) {
+        if (!AdAstraConfig.doOxygen) {
             return;
         }
         // Extinguish the fire in dimensions with no oxygen.

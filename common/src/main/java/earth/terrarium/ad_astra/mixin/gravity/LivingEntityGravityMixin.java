@@ -1,7 +1,7 @@
 package earth.terrarium.ad_astra.mixin.gravity;
 
-import earth.terrarium.ad_astra.AdAstra;
-import earth.terrarium.ad_astra.util.ModUtils;
+import earth.terrarium.ad_astra.common.config.AdAstraConfig;
+import earth.terrarium.ad_astra.common.util.ModUtils;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
@@ -20,13 +20,13 @@ public abstract class LivingEntityGravityMixin {
 
     @Inject(method = "travel", at = @At("TAIL"))
     public void adastra_travel(CallbackInfo ci) {
-        if (AdAstra.CONFIG.general.doLivingEntityGravity) {
+        if (AdAstraConfig.doLivingEntityGravity) {
             LivingEntity entity = (LivingEntity) (Object) this;
 
             Vec3 velocity = entity.getDeltaMovement();
 
             if (!entity.isNoGravity() && !entity.isInWater() && !entity.isInLava() && !entity.isFallFlying() && !entity.hasEffect(MobEffects.SLOW_FALLING)) {
-                double newGravity = CONSTANT * ModUtils.getPlanetGravity(entity.level);
+                double newGravity = CONSTANT * ModUtils.getEntityGravity(entity);
                 entity.setDeltaMovement(velocity.x(), velocity.y() + CONSTANT - newGravity, velocity.z());
             }
         }
@@ -36,6 +36,6 @@ public abstract class LivingEntityGravityMixin {
     @ModifyVariable(method = "causeFallDamage", at = @At("HEAD"), ordinal = 1, argsOnly = true)
     private float adastra_causeFallDamage(float damageMultiplier) {
         LivingEntity entity = ((LivingEntity) (Object) this);
-        return damageMultiplier * ModUtils.getPlanetGravity(entity.level);
+        return damageMultiplier * ModUtils.getEntityGravity(entity);
     }
 }

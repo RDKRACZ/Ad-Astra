@@ -1,15 +1,28 @@
-<a href="https://github.com/Team-Resourceful/ResourcefulLib">
+<a href="https://modrinth.com/mod/resourceful-lib">
     <p align="center">
-        <img src="https://media.discordapp.net/attachments/1023678603289972797/1042445198183120946/BH_NU_BADGE.png" alt="ResourcefulLib" width="400"/> 
+        <img src="https://media.discordapp.net/attachments/1023678603289972797/1042445198183120946/BH_NU_BADGE.png" alt="Resourceful Lib" width="400"/> 
     </p>
 </a>
 
-Also uses [Botarium](https://github.com/terrarium-earth/Botarium)
+<a href="https://modrinth.com/mod/resourceful-config">
+    <p align="center">
+        <img src="https://i.imgur.com/2oA0JFA.png" alt="Resourceful Config" width="400"/> 
+    </p>
+</a>
 
-![Banner](https://media.discordapp.net/attachments/1005790947365376060/1007374451828084836/Ad_Astra_Banner.png?width=1440&height=691)
+<div align="center">
+
+Also uses [Botarium](https://modrinth.com/mod/botarium)
+</div>
+
+<a href="https://discord.terrarium.earth/">
+    <p align="center">
+        <img src="https://cdn.discordapp.com/attachments/1005798262273495041/1018731591314448495/discord.png" alt="Discord" width="400"/> 
+    </p>
+</a>
 
 <a>
-    <p align="left">
+    <p align="center">
         <img src="https://cdn.discordapp.com/attachments/1005798262273495041/1018343461642055690/Ad_Astra.png" alt="Ad Astra!" width="400"/> 
     </p>
 </a>
@@ -20,11 +33,8 @@ everything you need to become an astronaut: rockets, space suits, space stations
 the Moon? Build a self-sustaining bunker on Mars? Go mining on Venus? The entire Solar System, better yet, Milky Way, is
 at your disposal!
 
-Consider downloading REI, JEI, or EMI for recipe viewing. Ad Astra! also has an in-game Patchouli guidebook called the "
-Astrodux," which will guide you through progression.
-
 <a>
-    <p align="left">
+    <p align="center">
         <img src="https://cdn.discordapp.com/attachments/1005798262273495041/1018343462006964234/Features.png" alt="Features" width="400"/> 
     </p>
 </a>
@@ -38,41 +48,49 @@ Astrodux," which will guide you through progression.
   station deco and metal plating.
 - An in-game guidebook, explaining everything you need to progress and prosper in Ad Astra!
 
-## Social Media
+## Developers
 
-For specific Ad Astra! help, check out the official Ad Astra! Discord.
-<a href="https://discord.com/invite/K6EWQQ7Ntd">
-    <p align="left">
-        <img src="https://cdn.discordapp.com/attachments/1005798262273495041/1018731591314448495/discord.png" alt="Discord" width="400"/> 
-    </p>
-</a>
-Also consider checking out the Terrarium discord to see our other mods and speak with the lovely members of our community <3
-<br></br>
-[![Discord](https://cdn.discordapp.com/attachments/721407493351407646/841063759078096966/discordlogo.png)](https://discord.gg/terrarium "Discord")
-![](https://cdn.discordapp.com/attachments/843362690088042506/848395257087262760/blanklogo.png)
-[![Twitter](https://cdn.discordapp.com/attachments/721407493351407646/841063761359798302/twitterlogo.png)](https://twitter.com/TerrariumEarth "Twitter")
-![](https://cdn.discordapp.com/attachments/843362690088042506/848395257087262760/blanklogo.png)
-[![YouTube](https://cdn.discordapp.com/attachments/721407493351407646/841063763151159297/youtubelogo.png)](https://www.youtube.com/channel/UCSfT3_pCrEzs_HcHr5wINRQ "YouTube")
-![](https://cdn.discordapp.com/attachments/843362690088042506/848395257087262760/blanklogo.png)
+To add this library to your project, do the following:
 
-## Donate
+```groovy
+repositories {
+  maven {
+    // Location of the maven that hosts Terrarium and Team Resourceful's files.
+    name = "Resourceful Bees Maven"
+    url = "https://nexus.resourcefulbees.com/repository/maven-public/"
+  }
+}
+```
 
-![](https://cdn.discordapp.com/attachments/843362690088042506/848395257087262760/blanklogo.png)
-[![Patreon](https://cdn.discordapp.com/attachments/721407493351407646/841072839166787584/pintrestlogo.png)](https://www.patreon.com/terrariumearth "Patreon")
-![](https://cdn.discordapp.com/attachments/843362690088042506/848395257087262760/blanklogo.png)
-[![Paypal](https://cdn.discordapp.com/attachments/721407493351407646/841072837102927883/paypallogo.png)](https://www.paypal.com/paypalme/technomages?locale.x=en_US "Paypal")
-![](https://cdn.discordapp.com/attachments/843362690088042506/848395257087262760/blanklogo.png)
+In an Architectury project, you would implement it like so:
 
-## Our Other Projects
+Common
 
-* [Tempad](https://www.curseforge.com/minecraft/mc-mods/tempad)
-* [Chipped](https://www.curseforge.com/minecraft/mc-mods/chipped)
-* [Colorful Azaleas](https://www.curseforge.com/minecraft/mc-mods/colorfulazaleas)
-* [Super Ores](https://www.curseforge.com/minecraft/mc-mods/super-ores)
-* [Lil'Wings](https://www.curseforge.com/minecraft/mc-mods/lil-wings)
-* [Vitalize (Spirit Addon)](https://www.curseforge.com/minecraft/mc-mods/vitalize)
-* [Reaper (Spirit Addon)](https://www.curseforge.com/minecraft/mc-mods/reaper)
-* [CTM Refrabricated](https://www.curseforge.com/minecraft/mc-mods/ctm-refabricated)
-* [Spirit](https://www.curseforge.com/minecraft/mc-mods/spirit)
-* [Handcrafted](https://www.curseforge.com/minecraft/mc-mods/handcrafted)
-* [Botarium](https://github.com/terrarium-earth/Botarium)
+```groovy
+dependencies {
+    modImplementation "earth.terrarium:ad_astra-common-$rootProject.minecraft_version:$rootProject.ad_astra_version"
+}
+```
+
+Fabric
+
+```groovy
+dependencies {
+    modImplementation "earth.terrarium:ad_astra-fabric-$rootProject.minecraft_version:$rootProject.ad_astra_version"
+}
+```
+
+Forge
+
+```groovy
+dependencies {
+    modImplementation "earth.terrarium:ad_astra-forge-$rootProject.minecraft_version:$rootProject.ad_astra_version"
+}
+```
+
+---
+
+<div align="center">
+
+![Version](https://img.shields.io/maven-metadata/v?label=Ad%20Astra%20Version&metadataUrl=https%3A%2F%2Fnexus.resourcefulbees.com%2Frepository%2Fmaven-public%2Fearth%2Fterrarium%2Fad_astra-common-1.19.2%2Fmaven-metadata.xml)
+</div>

@@ -1,6 +1,6 @@
 package earth.terrarium.ad_astra.mixin.gravity;
 
-import earth.terrarium.ad_astra.util.ModUtils;
+import earth.terrarium.ad_astra.common.util.ModUtils;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.phys.Vec3;
@@ -21,7 +21,7 @@ public abstract class FishingHookMixin {
         Entity entity = (Entity) (Object) this;
         if (!entity.isNoGravity()) {
             Vec3 velocity = entity.getDeltaMovement();
-            double newGravity = CONSTANT * ModUtils.getPlanetGravity(entity.level);
+            double newGravity = CONSTANT * ModUtils.getEntityGravity(entity);
             entity.setDeltaMovement(velocity.x(), velocity.y() - CONSTANT + newGravity, velocity.z());
         }
     }
